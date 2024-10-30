@@ -40,6 +40,16 @@ services:
     depends_on:
       - spark-master
 
+  app:
+    build:
+      context: app
+    ports:
+      - '5000:5000'
+    container_name: app
+    networks:
+      - spark
+    depends_on:
+      - spark-master
 
 networks:
   spark:
