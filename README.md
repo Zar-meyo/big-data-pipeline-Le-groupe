@@ -49,3 +49,6 @@ Nous avons ajouté un `mongodb` qui tourne dans le docker compose, il manque à 
 
 1. Mettre le fichier `ecommerce_data_with_trends.csv` dans le dossier `data/`
 2. Lancer `docker compose up`
+
+Pour lancer le partie ML, en attendant le raccord à l'application principale, vous pouvez lancer:
+`python ML-Analysis/MLClustering_Analysis.py` ou `python ML-Analysis/Predicting_modeling.py` après avoir `uv sync` pour les dépendances python.
