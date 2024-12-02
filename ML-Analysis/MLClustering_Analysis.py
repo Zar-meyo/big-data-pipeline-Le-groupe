@@ -4,7 +4,6 @@ from pyspark.sql.functions import col, count, sum, avg, count, collect_set, expr
 from pyspark.ml.feature import StringIndexer, OneHotEncoder, VectorAssembler, StandardScaler, CountVectorizer, PCA
 from pyspark.ml.clustering import KMeans
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from pyspark.ml.evaluation import ClusteringEvaluator
 
 #df = pd.read_csv('../app/ecommerce_data_with_trends.csv')
