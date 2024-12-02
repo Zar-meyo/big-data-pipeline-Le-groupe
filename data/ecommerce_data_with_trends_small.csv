@@ -1,0 +1,20 @@
+transaction_id,timestamp,customer_id,customer_name,city,customer_type,product_name,category,price,quantity,total_amount
+TX_89a20095-f7be-4bc1-bb58-a305e3fc8313,2023-10-30 03:01:46.571042,6933,David Hays,New Sabrina,B2C,Furniture Product_10,Home & Kitchen > Furniture,246.08,4,984.32
+TX_a6b15a50-47b9-428c-b297-ce365acb061a,2023-10-30 03:06:07.918040,9328,Adam Oconnell,East Katherineton,B2C,Non-Fiction Product_15,Books > Non-Fiction,792.3,4,3169.2
+TX_abdde2cb-3752-4399-84f4-c91c098b195f,2023-10-30 03:06:28.475922,6766,Jerry Brown,Lukefort,B2B,Bedding Product_1,Home & Kitchen > Bedding,685.73,40,27429.2
+TX_ba162310-0807-4dee-818f-fa014f9880ef,2023-10-30 03:06:59.374222,9111,Craig Martinez,South Leonard,B2B,Shoes Product_11,Fashion > Shoes,404.96,96,38876.16
+TX_60ec44fd-2172-4ffa-8c67-4b399c59ed7c,2023-10-30 03:08:29.580560,1763,David Wood,Jacksonstad,B2B,Supplements Product_5,Health & Personal Care > Supplements,927.67,35,32468.45
+TX_724fac75-2da8-4694-ad08-51d2f0ef1e3c,2023-10-30 03:10:15.041152,3620,Andrew Avila,Pittmanfort,B2B,Computers Product_11,Electronics > Computers,225.06,25,5626.5
+TX_b82ed20e-13e9-43c9-9722-67f861b916cf,2023-10-30 03:11:36.464170,8473,Nichole Bartlett,Petersonmouth,B2B,Women's Clothing Product_7,Fashion > Women's Clothing,693.73,94,65210.62
+TX_2490baff-da73-4257-87b0-fdc68b039bb4,2023-10-30 03:11:58.760631,9069,Bryan Reyes,East Malikbury,B2B,Supplements Product_8,Health & Personal Care > Supplements,939.16,85,79828.6
+TX_de6a75ae-fef2-4163-8e83-07cf8c727e7a,2023-10-30 03:13:16.476470,54,Kimberly Miller,North Amandafurt,B2C,Women's Clothing Product_4,Fashion > Women's Clothing,135.42,1,135.42
+TX_e5861fca-1084-4ef0-9e04-139d5c12a955,2023-10-30 03:13:25.110187,9287,Anthony Miller,West Danielport,B2C,Outdoor Apparel Product_7,Sports & Outdoors > Outdoor Apparel,655.92,1,655.92
+TX_ca76b6e1-0bf0-43c8-b08a-16ce901dd612,2023-10-30 03:14:33.238248,9957,Madison Martinez,South Kimberlyburgh,B2C,Home Decor Product_5,Home & Kitchen > Home Decor,974.31,2,1948.62
+TX_308d591d-7151-4de2-aebf-0f032b4a219d,2023-10-30 03:14:45.682600,3663,Sally Hooper,Port Jennifer,B2C,Outdoor Apparel Product_17,Sports & Outdoors > Outdoor Apparel,117.13,3,351.39
+TX_1ccd254d-ebba-4747-9fc9-f7ffbd6fc57c,2023-10-30 03:15:10.459124,1877,Mark Hess,Ryanbury,B2C,Furniture Product_4,Home & Kitchen > Furniture,35.39,3,106.17
+TX_2d07f22f-52db-4708-a299-778571b12628,2023-10-30 03:15:25.908933,6182,Tonya Moreno,Joseville,B2C,Educational Product_5,Books > Educational,643.4,3,1930.2
+TX_ce0f2ee9-3ecb-4df2-a218-eae7998058e9,2023-10-30 03:16:44.963720,7628,James Hernandez,Pierceburgh,B2C,Kitchen Appliances Product_12,Home & Kitchen > Kitchen Appliances,641.69,5,3208.45
+TX_9e16f2f0-48da-4915-abea-0a4e102d76d3,2023-10-30 03:17:56.786749,7595,Jonathon Parker,New Donnaton,B2B,Tires Product_6,Automotive > Tires,279.32,17,4748.44
+TX_96d1375d-aa04-4701-8237-b9bff05a6530,2023-10-30 03:18:17.424041,6396,Daniel Price,Vincentfort,B2C,Fiction Product_5,Books > Fiction,270.95,3,812.85
+TX_63bfbf70-0cd3-4628-b6ff-b334422f3486,2023-10-30 03:18:22.634388,4866,Ryan Crawford,New Anthony,B2C,Motorcycle Parts Product_8,Automotive > Motorcycle Parts,155.41,3,466.23
+TX_f2323f9f-1928-48e9-a674-1a6cd3d5cc1f,2023-10-30 03:18:26.294131,3495,Megan Curtis,North Matthewmouth,B2B,Personal Care Product_5,Health & Personal Care > Personal Care,543.33,74,40206.42
