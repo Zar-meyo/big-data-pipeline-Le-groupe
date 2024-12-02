@@ -46,6 +46,10 @@ services:
     ports:
       - '5000:5000'
     container_name: app
+    volumes:
+      - type: bind
+        source: ./analysis
+        target: /usr/src/analysis
     networks:
       - spark
     depends_on:
