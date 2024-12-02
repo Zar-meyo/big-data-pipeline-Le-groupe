@@ -45,6 +45,8 @@ Nous avons essayé de tout dockeriser, il reste encore à lier toutes les partie
 
 Nous avons ajouté un `mongodb` qui tourne dans le docker compose, il manque à lier les scripts d'intégration des données dans l'application
 
+Le travail de ces deux parties se trouvent sur la branche `options`
+
 # Utilisation
 
 1. Mettre le fichier `ecommerce_data_with_trends.csv` dans le dossier `data/`
