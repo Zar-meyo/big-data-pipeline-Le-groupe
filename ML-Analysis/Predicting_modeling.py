@@ -5,13 +5,10 @@ from pyspark.ml.classification import RandomForestClassifier
 from pyspark.sql import SparkSession, Window
 from pyspark.sql.functions import col, count, sum, avg, count, collect_set, expr, hour, dayofweek, month, to_date, year, \
     lead, when, datediff, max, first, unix_timestamp, lag, collect_list, size
-from pyspark.ml.feature import StringIndexer, OneHotEncoder, VectorAssembler, StandardScaler, CountVectorizer, PCA
-from pyspark.ml.clustering import KMeans
+from pyspark.ml.feature import StringIndexer, VectorAssembler
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from pyspark.ml.evaluation import ClusteringEvaluator, BinaryClassificationEvaluator
+from pyspark.ml.evaluation import BinaryClassificationEvaluator
 from torch import nn
-from torch.nn import MSELoss
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import Dataset, DataLoader
