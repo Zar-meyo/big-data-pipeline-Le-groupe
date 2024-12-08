@@ -13,6 +13,7 @@ from pyspark.ml.evaluation import ClusteringEvaluator, BinaryClassificationEvalu
 from torch import nn
 from torch.nn import MSELoss
 from torch.optim import Adam
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import MinMaxScaler
 
@@ -83,22 +84,23 @@ print(customer_group.groupBy("futur_purchase").count().show())
 #PLOT
 predi = model_train.transform(test)
 predi_df = predi.select("customer_id", "futur_purchase", col("probability").alias("predicted_probability"), col("prediction").alias("predicted_label"))
-#Convert to pandas
+# Convert to pandas
 predi_pandas_df = predi_df.limit(100).toPandas()
 predi_pandas_df["predicted_probability"] = predi_pandas_df["predicted_probability"].apply(lambda x: x[1])
-plt.figure(figsize=(10, 6))
-plt.scatter(predi_pandas_df["predicted_probability"], predi_pandas_df["futur_purchase"], color="blue", marker="o", s=50, label="True value (label)")
-plt.scatter(predi_pandas_df["predicted_probability"], predi_pandas_df["predicted_label"], color="orange", marker="x", s=50, label="Predicted value")
-
-plt.title("Purchase prediction in next hour", fontsize=16)
-plt.xlabel("Probability (purchase = 1)", fontsize=12)
-plt.ylabel("True predict (label)", fontsize=12)
-plt.axhline(y=0.5, color='r', linestyle='--', label="Decision Threshold")
+#difference between predicted and true values
+predi_pandas_df["difference"] = abs(predi_pandas_df["predicted_label"] - predi_pandas_df["futur_purchase"])
+plt.figure(figsize=(12, 8))
+plt.scatter(range(len(predi_pandas_df)), predi_pandas_df["futur_purchase"], color="blue", marker="o", label="True Values", s=50)
+plt.scatter(range(len(predi_pandas_df)), predi_pandas_df["predicted_label"], color="orange", marker="x", label="Predicted Values", s=50)
+plt.plot(range(len(predi_pandas_df)), predi_pandas_df["difference"], linestyle="--", color="red", alpha=0.5, label="Difference")
+plt.title("True vs Predicted Purchase Values", fontsize=16)
+plt.xlabel("Sample Index", fontsize=12)
+plt.ylabel("Purchase Prediction", fontsize=12)
 plt.legend()
 plt.grid(alpha=0.3)
 plt.savefig("Plot_result/predict_purchase_next_hour.png", dpi=300, bbox_inches="tight")
 plt.show()
-plt.close()
+
 
 ###################################################################
 # Do forecast of total_amount purchase of each people. We want
@@ -132,6 +134,8 @@ target_scaler = MinMaxScaler()
 features_scaled = feature_scaler.fit_transform(features.reshape(-1, window_size))
 targets_scaled = target_scaler.fit_transform(targets.reshape(-1, 1))
 features_scaled = features_scaled.reshape(-1, window_size, 1)
+targets_scaled = targets_scaled[0::25000]
+features_scaled = features_scaled[0::25000]
 
 print(f"Features sclaed: min={features_scaled.min()}, max={features_scaled.max()}")
 print(f"Targets scaled: min={targets_scaled.min()}, max={targets_scaled.max()}")
@@ -172,9 +176,10 @@ model = LSTMModel(1, 50, 1, 2)
 #TTraining of the model
 dataset = TimeSeriesDataset(features_scaled, targets_scaled)
 train_loader = DataLoader(dataset, batch_size=32, shuffle=True)
-criterion = MSELoss()
-optimizer = Adam(model.parameters(), lr=0.001)
-epochs = 30
+criterion = nn.HuberLoss(delta=1.0)
+optimizer = Adam(model.parameters(), lr=0.0001)
+epochs = 500
+scheduler = ReduceLROnPlateau(optimizer, mode='min', patience=5, factor=0.5, verbose=True)
 for epoch in range(epochs):
     model.train()
     epoch_loss = 0
@@ -185,6 +190,8 @@ for epoch in range(epochs):
         loss.backward()
         optimizer.step()
         epoch_loss += loss.item()
+    scheduler.step(epoch_loss / len(train_loader))
+    print(scheduler.get_last_lr())
     print(f"Epoch {epoch+1}/{epochs}, Loss: {epoch_loss/len(train_loader):.4f}")
 
 
