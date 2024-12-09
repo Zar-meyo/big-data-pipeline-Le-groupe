@@ -17,6 +17,7 @@ def get_spark_session():
         .config("spark.driver.memory", "2g") \
         .config("spark.sql.shuffle.partitions", "4") \
         .config("spark.sql.legacy.timeParserPolicy", "LEGACY") \
+        .config("spark.hadoop.fs.defaultFS", "hdfs://namenode:9000") \
         .getOrCreate()
 
 

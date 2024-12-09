@@ -9,12 +9,12 @@ docker exec namenode bash -c "
   hdfs dfs -chmod -R 770 /output
 "
 
-# Install Python dependencies in the Spark container
-docker exec spark bash -c "
-  if [ -f scripts/requirements.txt ]; then
-    pip install --user -r scripts/requirements.txt
-  else
-    echo 'Error: scripts/requirements.txt not found!'
-    exit 1
-  fi
-"
+## Install Python dependencies in the Spark container
+#docker exec spark bash -c "
+#  if [ -f scripts/requirements.txt ]; then
+#    pip install --user -r scripts/requirements.txt
+#  else
+#    echo 'Error: scripts/requirements.txt not found!'
+#    exit 1
+#  fi
+#"

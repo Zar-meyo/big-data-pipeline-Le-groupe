@@ -51,16 +51,22 @@ services:
       - ./volumes/hadoop_namenode:/opt/hadoop/data/nameNode
       - ./hadoop_config:/opt/hadoop/etc/hadoop
       - ./scripts/start-hdfs.sh:/start-hdfs.sh
+      - ./data/:/tmp/data/
     ports:
       - "9870:9870"
     command: [ "/bin/bash", "/start-hdfs.sh" ]
     networks:
       - spark
+    healthcheck:
+      test: [ "CMD", "/opt/hadoop/bin/hdfs", "dfs", "-ls", "/input" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  datanode1:
+  datanode:
     image: apache/hadoop:3.3.5
-    container_name: datanode1
-    hostname: datanode1
+    container_name: datanode
+    hostname: datanode
     user: root
     environment:
       - HADOOP_HOME=/opt/hadoop
@@ -87,7 +93,12 @@ services:
     networks:
       - spark
     depends_on:
-      - spark-master
+      namenode:
+          condition: service_healthy
+      spark-master:
+          condition: service_started
+
+
 
 networks:
   spark:

@@ -26,6 +26,7 @@ def get_top_spenders(spark_df, dir_path):
         .orderBy(col('total_spent').desc()) \
         .limit(20)
     top_spenders.toPandas().to_csv(f"{dir_path}/top_spenders.csv")
+    top_spenders.write.csv("hdfs://namenode:9000/output/top_spenders.csv", mode="overwrite", header=True)
 
 
 def client_mean_purchase_per_category(spark_df, dir_path):

@@ -4,10 +4,10 @@ import logger as lg
 
 def get_spark_df(spark):
     logger = lg.get_module_logger(__name__)
-    logger.debug("pandas begin")
-    df = pd.read_csv("/usr/src/app/ecommerce_data_with_trends.csv")
-    logger.debug("pandas done")
     logger.debug("spark begin")
-    df = spark.createDataFrame(df).repartition(4)
+    data_path = "hdfs://namenode:9000/input/ecommerce_data_with_trends.csv"
+    df = spark.read.csv(data_path, header=True, inferSchema=True)
     logger.debug("spark done")
+    logger.debug("writting df in hdfs...")
+    df.write.csv("hdfs://namenode:9000/output/cleaned_data.csv", mode="overwrite", header=True)
     return df
