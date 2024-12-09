@@ -22,7 +22,7 @@ def get_top_spenders(spark_df, dir_path):
             .agg(sum('total_amount').alias('total_spent'))\
             .orderBy(col('total_spent').desc())\
             .limit(20)
-    top_spenders.write.mode("overwrite").csv(f"{dir_path}/top_spenders.csv", header=True)
+    top_spenders.toPandas().to_csv(f"{dir_path}/top_spenders.csv")
 
 def client_mean_purchase_per_category(spark_df, dir_path):
     logger.debug("Plotting mean purchases per category")
@@ -142,7 +142,7 @@ def run_spark_analysis(spark_df, is_processed=True):
     logger.debug("Creating spark analysis directory")
     Path(dir_path).mkdir(parents=True, exist_ok=True)
 
-    #get_top_spenders(spark_df, dir_path)
+    get_top_spenders(spark_df, dir_path)
     client_mean_purchase_per_category(spark_df, dir_path)
     client_mean_purchase_sub_category(spark_df, dir_path)
     get_month_trends(spark_df, dir_path)
