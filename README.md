@@ -10,7 +10,7 @@ Membre du groupe:
   
 ## Data Ingestion  
   
-L'application lit le fichier `.csv` afin de créer le dataframe spark.
+L'application lit le fichier `.csv` dans hdfs afin de créer le dataframe spark.
   
 ## Data PreProcessing and Cleaning  
 
@@ -42,5 +42,4 @@ On repasse par `pandas` pour enregistrer le `.csv` détaillant les clients ayant
 1. Mettre le fichier `ecommerce_data_with_trends.csv` dans le dossier `./data`  
 2. Lancer `docker compose up` 
 3. Les logs s'affiches dans le container `app`
-4. à la fin de vie de l'application, les dossiers écrits dans hdfs sont visibles avec la commande `docker exec namenode hdfs dfs -ls /output
-`
+4. à la fin de vie de l'application, les dossiers écrits dans hdfs sont visibles avec la commande `docker exec namenode hdfs dfs -ls /output`
