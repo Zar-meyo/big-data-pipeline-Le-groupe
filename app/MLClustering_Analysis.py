@@ -22,6 +22,8 @@ def ml_clustering(spark_df, spark):
     # features of the dataset (city, customer_type, quantity
     # and total_amount)
     ################################################################################
+    logger.debug("Begin First K-Mean")
+    logger.debug("Encoding Features and Assemble Features First K-Mean")
 
     #We encode customer type string and city string to number
     customer_type = StringIndexer(inputCol="customer_type", outputCol="customer_type_index")
@@ -34,6 +36,8 @@ def ml_clustering(spark_df, spark):
     customer_group_data = vector.transform(customer_group_data)
 
     #Normalize data
+    logger.debug("Normalize Datas First K-Mean")
+
     scaler = StandardScaler(inputCol="feature", outputCol="scale_feature")
     customer_group_data = scaler.fit(customer_group_data).transform(customer_group_data)
 
@@ -51,12 +55,18 @@ def ml_clustering(spark_df, spark):
     """
 
     #Best result for silhouette score was with k=5 (0.658)
+    logger.debug("Fit First K-Mean")
+
     kmeans = KMeans(featuresCol="scale_feature", k=5, seed=42)
     model = kmeans.fit(customer_group_data)
+
+    logger.debug("Prediction First K-Mean")
 
     predictions = model.transform(customer_group_data)
 
     #Convert to Pandas for plot
+    logger.debug("Plot First K-Mean")
+
     plot_data = predictions.select("city_index", "customer_type_index", "quantity", "total_amount", "prediction").toPandas()
     #Just take 1 out of 40 points (if we take all it's too much)
     plot_data = plot_data.iloc[::40, :]
@@ -86,8 +96,11 @@ def ml_clustering(spark_df, spark):
     # We will identify relation between customer and their similar purchase
     # (using category and product_name)
     ################################################################################
+    logger.debug("Begin Second K-Mean")
 
     #We encode category string and product_name string to number
+    logger.debug("Encoding datas Second K-Mean")
+
     category_type = StringIndexer(inputCol="category", outputCol="category_index")
     product_name_type = StringIndexer(inputCol="product_name", outputCol="product_name_index")
     customer_group2_data = category_type.fit(spark_df).transform(spark_df)
@@ -115,6 +128,8 @@ def ml_clustering(spark_df, spark):
     # Do PCA for dimensionality reduction
     # I choose PCA of 3 components to be able to plot all the component of the
     # PCA, even if we loose informations with that
+    logger.debug("Do PCA Second K-Mean")
+
     pca = PCA(k=3, inputCol="features", outputCol="pca_features")
     customer_buy = pca.fit(customer_buy).transform(customer_buy)
 
@@ -130,6 +145,7 @@ def ml_clustering(spark_df, spark):
         silhouette_score2.append(score)
         print('Silhouette Score for k =', i, 'is', score)
     """
+    logger.debug("Train Second K-Mean")
 
     kmeans2 = KMeans(featuresCol="pca_features", k=4, seed=42)
     model2 = kmeans2.fit(customer_buy)
@@ -137,6 +153,8 @@ def ml_clustering(spark_df, spark):
     #PLOT
     #We will see the 4 clusters using the informations of the
     #three composents of our PCA
+    logger.debug("Plot Second K-Mean")
+
     predictions = model2.transform(customer_buy)
     plot_data = predictions.select("customer_id", "pca_features", "prediction").toPandas()
     plot_data["x"] = plot_data["pca_features"].apply(lambda v: v[0])
@@ -161,6 +179,8 @@ def ml_clustering(spark_df, spark):
 
     #He don't find .vocabulary so i have to drop the columns and
     #redo all i don't know why
+    logger.debug("Decode PCA Values Second K-Mean")
+
     customer_buy = customer_buy.drop("pca_features")
     pca_model = pca.fit(customer_buy)
     pca_loadings = pca_model.pc.toArray()
@@ -175,6 +195,8 @@ def ml_clustering(spark_df, spark):
     n_components = pca_loadings.shape[1]
 
     #Create a dataframe for PCA to use it for top 10
+    logger.debug("Create Dataframe for PCA Second K-Mean")
+
     loading_df = pd.DataFrame(pca_loadings, index=all_features, columns=[f"PC{i+1}" for i in range(n_components)])
     category_indexer_model = category_type.fit(spark_df)
     product_indexer_model = product_name_type.fit(spark_df)
@@ -195,6 +217,8 @@ def ml_clustering(spark_df, spark):
     decoded_df.index = decoded_features
 
     #PLOT for each PCA component
+    logger.debug("Plot Each PCA Second K-Mean")
+
     for pc in ["PC1", "PC2", "PC3"]:
         # Get the best and worst top 10 features for each component
         top_10_features = decoded_df[pc].sort_values(ascending=False).head(10)
@@ -220,15 +244,20 @@ def ml_clustering(spark_df, spark):
     # We will identify purchase time to analyze hours, days and months purchase
     # trends of customer (to for exemple target customer for month ads campaigns
     ################################################################################
+    logger.debug("Begin Third K-Mean")
 
     #Get temporal data to have columns of days, hours and months
     time_data = spark_df.withColumn("hour", hour("timestamp")).withColumn("day_of_week", dayofweek("timestamp")).withColumn("month", month("timestamp"))
 
     #We assemble the time features
+    logger.debug("Assemble Third K-Mean")
+
     vector3 = VectorAssembler(inputCols=["hour", "day_of_week", "month"], outputCol="time_features")
     time_data = vector3.transform(time_data)
 
     #Normalize datas
+    logger.debug("Normalize Datas Third K-Mean")
+
     scaler2 = StandardScaler(inputCol="time_features", outputCol="time_features_scaled")
     time_data = scaler2.fit(time_data).transform(time_data)
 
@@ -246,11 +275,15 @@ def ml_clustering(spark_df, spark):
     """
 
     #Do Kmeans with k=8
+    logger.debug("Train Third K-Mean")
+
     kmeans3 = KMeans(featuresCol="time_features_scaled", k=8, seed=42)
     model3 = kmeans3.fit(time_data)
     time_clusters = model3.transform(time_data)
 
     #PLOT
+    logger.debug("Plot Third K-Mean")
+
     plot_data = time_clusters.select("hour", "day_of_week", "month", "prediction").toPandas()
     plot_data = plot_data.iloc[::40, :]
     fig = plt.figure(figsize=(12, 10))

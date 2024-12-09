@@ -36,7 +36,7 @@ def ml_prediction(spark_df, spark):
 
     # need to upgrade this model
     ###################################################################
-
+    logger.debug("Begin dataset for Random Forest Classifier")
     # Do column of multiple time data to use
     spark_df = spark_df.withColumn("date", to_date(col("timestamp")))
     spark_df = spark_df.withColumn("year", year(col("date")))
@@ -61,6 +61,8 @@ def ml_prediction(spark_df, spark):
     customer_group = customer_group.withColumn("class_weight", when(col("futur_purchase") == 1, 1.0).otherwise(2.0))
 
     # We encode customer type string to number
+    logger.debug("Encoding and assembling the features")
+
     string_type = StringIndexer(inputCol="customer_type", outputCol="index_customer_type")
     customer_group = string_type.fit(customer_group).transform(customer_group)
 
@@ -73,8 +75,12 @@ def ml_prediction(spark_df, spark):
     train, test = customer_group.randomSplit([0.8, 0.2], seed=123)
 
     # We will use randomforestclassifier to predict future purchase
+    logger.debug("Create and train the model Random Forest Classifier")
+
     model = RandomForestClassifier(featuresCol="features", labelCol="futur_purchase", weightCol="class_weight")
     model_train = model.fit(train)
+
+    logger.debug("Evaluate the model Random Forest Classifier")
 
     # We will evaluate the model
     eva = BinaryClassificationEvaluator(labelCol="futur_purchase")
@@ -84,6 +90,8 @@ def ml_prediction(spark_df, spark):
     logger.debug(customer_group.groupBy("futur_purchase").count().show())
 
     # PLOT
+    logger.debug("Plot Random Forest Classifier")
+
     predi = model_train.transform(test)
     predi_df = predi.select("customer_id", "futur_purchase", col("probability").alias("predicted_probability"),
                             col("prediction").alias("predicted_label"))
@@ -115,6 +123,8 @@ def ml_prediction(spark_df, spark):
     # It make me 1h to train with 20 epochs,
     ###################################################################
 
+    logger.debug("Begin dataset for LSTM")
+
     # group transaction by customer
     window_size = 5
     window2 = Window.partitionBy("customer_id").orderBy("timestamp")
@@ -135,6 +145,8 @@ def ml_prediction(spark_df, spark):
     features, targets = spark_to_numpy(lstm_data, "sequence", "total_amount")
     logger.debug(f"Features shape: {features.shape}, Targets shape: {targets.shape}")
 
+    logger.debug("Normalize datas for LSTM")
+
     # We normalize the datas
     feature_scaler = MinMaxScaler()
     target_scaler = MinMaxScaler()
@@ -146,6 +158,8 @@ def ml_prediction(spark_df, spark):
 
     logger.debug(f"Features scaled: min={features_scaled.min()}, max={features_scaled.max()}")
     logger.debug(f"Targets scaled: min={targets_scaled.min()}, max={targets_scaled.max()}")
+
+    logger.debug("Time Series Dataset Class")
 
     # Do a dataset class for pytorch and easy batch
     class TimeSeriesDataset(Dataset):
@@ -160,6 +174,8 @@ def ml_prediction(spark_df, spark):
             return self.features[idx], self.targets[idx]
 
     # Create the LSTM model with one hidden layer and batchnorm
+    logger.debug("LSTMModel Class")
+
     class LSTMModel(nn.Module):
         def __init__(self, input_dim, hidden_dim, output_dim, num_layers):
             super(LSTMModel, self).__init__()
@@ -183,6 +199,8 @@ def ml_prediction(spark_df, spark):
 
     model = LSTMModel(1, 50, 1, 2)
 
+    logger.debug("Training the LSTM")
+
     # TTraining of the model
     dataset = TimeSeriesDataset(features_scaled, targets_scaled)
     train_loader = DataLoader(dataset, batch_size=32, shuffle=True)
@@ -205,6 +223,8 @@ def ml_prediction(spark_df, spark):
         logger.debug(f"Epoch {epoch + 1}/{epochs}, Loss: {epoch_loss / len(train_loader):.4f}")
 
     # Forecast the 10 last sequences to visualize our result
+    logger.debug("Forecast for plot LSTM")
+
     def forecast(model, data):
         model.eval()
         with torch.no_grad():
@@ -223,6 +243,8 @@ def ml_prediction(spark_df, spark):
     forecast_df.show()
 
     # PLOT
+    logger.debug("Plot LSTM")
+
     actual = targets[-10:]
     plt.scatter(range(len(actual)), actual, label="Actual", marker="o")
     plt.scatter(range(len(forecasted_values)), forecasted_values, label="Forecasted", marker="x")
