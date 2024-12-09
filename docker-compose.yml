@@ -40,6 +40,46 @@ services:
     depends_on:
       - spark-master
 
+  namenode:
+    image: apache/hadoop:3.3.5
+    container_name: namenode
+    hostname: namenode
+    user: root
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+    volumes:
+      - ./volumes/hadoop_namenode:/opt/hadoop/data/nameNode
+      - ./hadoop_config:/opt/hadoop/etc/hadoop
+      - ./scripts/start-hdfs.sh:/start-hdfs.sh
+      - ./data/:/tmp/data/
+    ports:
+      - "9870:9870"
+    command: [ "/bin/bash", "/start-hdfs.sh" ]
+    networks:
+      - spark
+    healthcheck:
+      test: [ "CMD", "/opt/hadoop/bin/hdfs", "dfs", "-ls", "/input" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  datanode:
+    image: apache/hadoop:3.3.5
+    container_name: datanode
+    hostname: datanode
+    user: root
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+    volumes:
+      - ./volumes/hadoop_datanode:/opt/hadoop/data/dataNode
+      - ./hadoop_config:/opt/hadoop/etc/hadoop
+      - ./scripts/init-datanode.sh:/init-datanode.sh
+    depends_on:
+      - namenode
+    command: [ "/bin/bash", "/init-datanode.sh" ]
+    networks:
+      - spark
+
   app:
     build:
       context: app
@@ -53,8 +93,16 @@ services:
     networks:
       - spark
     depends_on:
-      - spark-master
+      namenode:
+          condition: service_healthy
+      spark-master:
+          condition: service_started
+
+
 
 networks:
   spark:
     driver: bridge
+
+volumes:
+  hdfs-data:

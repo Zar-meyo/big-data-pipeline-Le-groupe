@@ -39,5 +39,8 @@ On repasse par `pandas` pour enregistrer le `.csv` détaillant les clients ayant
   
 # Utilisation  
   
-1. Mettre le fichier `ecommerce_data_with_trends.csv` dans le dossier `/app`  
+1. Mettre le fichier `ecommerce_data_with_trends.csv` dans le dossier `./data`  
 2. Lancer `docker compose up` 
+3. Les logs s'affiches dans le container `app`
+4. à la fin de vie de l'application, les dossiers écrits dans hdfs sont visibles avec la commande `docker exec namenode hdfs dfs -ls /output
+`
