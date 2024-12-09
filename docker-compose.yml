@@ -48,7 +48,7 @@ services:
     environment:
       - HADOOP_HOME=/opt/hadoop
     volumes:
-      - ./hadoop_namenode:/opt/hadoop/data/nameNode
+      - ./volumes/hadoop_namenode:/opt/hadoop/data/nameNode
       - ./hadoop_config:/opt/hadoop/etc/hadoop
       - ./scripts/start-hdfs.sh:/start-hdfs.sh
     ports:
@@ -65,22 +65,12 @@ services:
     environment:
       - HADOOP_HOME=/opt/hadoop
     volumes:
-      - ./hadoop_datanode1:/opt/hadoop/data/dataNode
+      - ./volumes/hadoop_datanode:/opt/hadoop/data/dataNode
       - ./hadoop_config:/opt/hadoop/etc/hadoop
       - ./scripts/init-datanode.sh:/init-datanode.sh
     depends_on:
       - namenode
     command: [ "/bin/bash", "/init-datanode.sh" ]
-    networks:
-      - spark
-
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
     networks:
       - spark
 
@@ -90,6 +80,10 @@ services:
     ports:
       - '5000:5000'
     container_name: app
+    volumes:
+      - type: bind
+        source: ./analysis
+        target: /usr/src/analysis
     networks:
       - spark
     depends_on:
@@ -101,4 +95,3 @@ networks:
 
 volumes:
   hdfs-data:
-  mongo-data:
