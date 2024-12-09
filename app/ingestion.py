@@ -10,6 +10,7 @@ spark = SparkSession.builder \
     .config("spark.executor.memory", "8g") \
     .config("spark.driver.memory", "2g") \
     .config("spark.sql.shuffle.partitions", "4") \
+    .config("spark.hadoop.fs.defaultFS", "hdfs://namenode:9000") \
     .getOrCreate()
 
 logger = lg.get_module_logger(__name__)

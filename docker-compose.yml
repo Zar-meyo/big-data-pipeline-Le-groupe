@@ -40,6 +40,50 @@ services:
     depends_on:
       - spark-master
 
+  namenode:
+    image: apache/hadoop:3.3.5
+    container_name: namenode
+    hostname: namenode
+    user: root
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+    volumes:
+      - ./hadoop_namenode:/opt/hadoop/data/nameNode
+      - ./hadoop_config:/opt/hadoop/etc/hadoop
+      - ./scripts/start-hdfs.sh:/start-hdfs.sh
+    ports:
+      - "9870:9870"
+    command: [ "/bin/bash", "/start-hdfs.sh" ]
+    networks:
+      - spark
+
+  datanode1:
+    image: apache/hadoop:3.3.5
+    container_name: datanode1
+    hostname: datanode1
+    user: root
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+    volumes:
+      - ./hadoop_datanode1:/opt/hadoop/data/dataNode
+      - ./hadoop_config:/opt/hadoop/etc/hadoop
+      - ./scripts/init-datanode.sh:/init-datanode.sh
+    depends_on:
+      - namenode
+    command: [ "/bin/bash", "/init-datanode.sh" ]
+    networks:
+      - spark
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - spark
+
   app:
     build:
       context: app
@@ -54,3 +98,7 @@ services:
 networks:
   spark:
     driver: bridge
+
+volumes:
+  hdfs-data:
+  mongo-data:
