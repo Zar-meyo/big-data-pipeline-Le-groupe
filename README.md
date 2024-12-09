@@ -19,9 +19,9 @@ La partie preprocessing a été effectuée dans le script pour l'analyse avec Sp
 Aussi, la partie écriture du dataset propre dans HDFS pose encore problème, nous n'avons pas encore de moyen de le tester sans la partie intégration NOSQL
 
 ## DEA
+Pour lancer le notebook, il faut que le dataset "ecommerce_data_with_trends.csv" soit présent dans le soddier app en dehors du dossier de cette partie.
 
-Finir l'analyse en se penchant sur des différences dans des catégories spéciales.
-Correctement finir la description de toutes les figures du notebook.
+Plusieurs analyses ont été faite pour cette partie, une analyse par type de client sur plusieurs variables, des analyses temporelles en fonction des jours et des mois, ainsi qu'une analyse par temps et par catégories. 
 
 ## SPARK DEA
 
